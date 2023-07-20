@@ -155,6 +155,8 @@ int main() {
     vials.emplace_back();
     vials.emplace_back();
 
+    int turnCount = 0; // Initialize the turn counter
+
     // Initialize the characters
     std::vector<char> characters = { 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'c', 'c', 'c', 'c', 'd', 'd', 'd', 'd' };
 
@@ -243,11 +245,12 @@ int main() {
         // Perform the transfer
         if (vials[sourceIndex].transfer(vials[destinationIndex])) {
             std::cout << "Transfer successful!" << std::endl;
+            turnCount++;
 
-            // Check for win condition
-            if (allVialsHaveFourCharacters(vials)) {
-                std::cout << "Congratulations! You have successfully sorted all vials." << std::endl;
-                break; // Break the loop when all non-empty vials have four characters
+        // Check for win condition
+        if (allVialsHaveFourCharacters(vials)) {
+            std::cout << "Congratulations! You have successfully sorted all vials." << std::endl;
+            break; // Break the loop when all non-empty vials have four characters
             }
         } else {
             std::cout << "Invalid move! Please try again." << std::endl;
@@ -255,6 +258,7 @@ int main() {
     }
 
     std::cout << "Game Over." << std::endl;
+    std::cout << "Total turns taken: " << turnCount << std::endl;
 
     return 0;
 }
