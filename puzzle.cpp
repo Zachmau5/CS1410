@@ -87,7 +87,7 @@ public:
         return numTransferred > 0;
     }
 */
-// Transfer one character from source vial to destination vial
+    // Transfer one character from source vial to destination vial
     bool transfer(Vial& destination) {
         if (this == &destination || filled == 0 || destination.getFilled() == 4)
             return false;
@@ -116,13 +116,9 @@ public:
         return filled;
     }
 
-    // Randomize the contents of the vial
-    void randomize() {
-        std::shuffle(contents, contents + filled, std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
-    }
 };
 
-// Function to check if all vials are full
+    // Function to check if all vials are full
     bool allVialsFull(const std::vector<Vial>& vials) {
         for (const auto& vial : vials) {
             if (!vial.isComplete())
@@ -131,13 +127,23 @@ public:
         return true;
     }
 
-// Function to generate a random number between min and max (inclusive)
+    // Function to generate a random number between min and max (inclusive)
     int generateRandomNumber(int min, int max) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<int> distribution(min, max);
         return distribution(gen);
     }
+    // Function to check if all non-empty vials have four characters
+    bool allVialsHaveFourCharacters(const std::vector<Vial>& vials) {
+        for (const auto& vial : vials) {
+            if (vial.getFilled() > 0 && vial.getFilled() != 4)
+                return false;
+            }
+        return true;
+    }
+
+
 
 int main() {
     // Create vials and initialize the game state
@@ -147,15 +153,22 @@ int main() {
     vials.emplace_back();
     vials.emplace_back();
     vials.emplace_back();
+    vials.emplace_back();
 
-    // Randomly distribute characters across the first 5 vials
-    std::vector<char> characters = { 'a', 'b', 'c', 'd' };
-    int distributionCount = 4;
+    // Initialize the characters
+    std::vector<char> characters = { 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'c', 'c', 'c', 'c', 'd', 'd', 'd', 'd' };
 
-    for (char character : characters) {
-        for (int i = 0; i < distributionCount; ++i) {
-            int randomIndex = generateRandomNumber(0, vials.size() - 1);
-            vials[randomIndex].add(character);
+    // Shuffle the characters once
+    std::shuffle(characters.begin(), characters.end(), std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
+
+    // Fill the vials with characters using the shuffled order
+    int characterIndex = 0;
+    for (int i = 0; i < vials.size(); ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (characterIndex < characters.size()) {
+                vials[i].add(characters[characterIndex]);
+                characterIndex++;
+            }
         }
     }
 
@@ -166,7 +179,7 @@ int main() {
 
     std::cout << "Welcome Simple Sort Puzzle that looks very much like the water sorting game..." << std::endl;
 
-    // Game loop
+     // Game loop
     while (true) {
         // Display the current state of vials
         for (const auto& vial : vials) {
@@ -175,7 +188,7 @@ int main() {
         std::cout << std::endl;
 
         // Prompt the player for input
-        std::cout << "Enter source vial number (1-5), or 'q' to quit: ";
+        std::cout << "Enter source vial number (1-6), or 'q' to quit: ";
         std::string input;
         std::cin >> input;
 
@@ -205,7 +218,7 @@ int main() {
         }
 
         // Prompt the player for the destination vial
-        std::cout << "Enter destination vial number (1-5), or 'q' to quit: ";
+        std::cout << "Enter destination vial number (1-6), or 'q' to quit: ";
         std::cin >> input;
 
         // Check if the player wants to quit
@@ -232,9 +245,9 @@ int main() {
             std::cout << "Transfer successful!" << std::endl;
 
             // Check for win condition
-            if (allVialsFull(vials)) {
+            if (allVialsHaveFourCharacters(vials)) {
                 std::cout << "Congratulations! You have successfully sorted all vials." << std::endl;
-                break;
+                break; // Break the loop when all non-empty vials have four characters
             }
         } else {
             std::cout << "Invalid move! Please try again." << std::endl;
